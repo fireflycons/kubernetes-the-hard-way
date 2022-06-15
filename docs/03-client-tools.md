@@ -7,25 +7,37 @@ If you are on a Linux laptop, then your laptop could be this system. In my case 
 ## Access all VMs
 
 Generate Key Pair on master-1 node
-`$ssh-keygen`
+```
+ssh-keygen
+```
 
-Leave all settings to default.
+Leave all settings to default (hit ENTER at each prompt).
 
-View the generated public key ID at:
+View the generated public key ID with:
 
 ```
-$cat .ssh/id_rsa.pub
+cat .ssh/id_rsa.pub
+```
+
+> output (truncated)
+```
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD......8+08b vagrant@master-1
 ```
 
-Move public key of master to all other VMs
+Move public key of master to all other VMs. Copy the output of the command above when you run it and use it to edit the command below.
+Then from your main workstation, do `vagrant ssh ...` replacing `...` with each of the four other VMs, and at each add the public key:
 
 ```
-$cat >> ~/.ssh/authorized_keys <<EOF
+cat >> ~/.ssh/authorized_keys <<EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD......8+08b vagrant@master-1
 EOF
 ```
 
+Finally add the public key to `authorized_keys` on `master-1` so that we can ssh/scp to ourself. This is necessary otherwise the certificate distribution in the next step won't work
+
+```
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+```
 
 ## Install kubectl
 

@@ -4,6 +4,8 @@ In this lab you will deploy the [DNS add-on](https://kubernetes.io/docs/concepts
 
 ## The DNS Cluster Add-on
 
+On `master-1`
+
 Deploy the `coredns` cluster add-on:
 
 ```

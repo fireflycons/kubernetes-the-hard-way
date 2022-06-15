@@ -44,14 +44,10 @@ Install the Kubernetes binaries:
 ### Configure the Kubernetes API Server
 
 ```
-{
-  sudo mkdir -p /var/lib/kubernetes/
-
   sudo cp ca.crt ca.key kube-apiserver.crt kube-apiserver.key \
     service-account.key service-account.crt \
     etcd-server.key etcd-server.crt \
-    encryption-config.yaml /var/lib/kubernetes/
-}
+    /var/lib/kubernetes/
 ```
 
 The instance internal IP address will be used to advertise the API Server to members of the cluster. Retrieve the internal IP address for the current compute instance:

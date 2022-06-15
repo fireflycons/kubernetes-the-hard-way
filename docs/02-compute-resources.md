@@ -22,22 +22,23 @@ This does the below:
     > If you choose to change these settings, please also update vagrant/ubuntu/vagrant/setup-hosts.sh
     > to add the additional hosts to the /etc/hosts default before running "vagrant up".
 
-- Set's IP addresses in the range 192.168.5
+- Sets IP addresses in the range 192.168.5
 
-    | VM            |  VM Name               | Purpose       | IP           | Forwarded Port   |
-    | ------------  | ---------------------- |:-------------:| ------------:| ----------------:|
-    | master-1      | kubernetes-ha-master-1 | Master        | 192.168.5.11 |     2711         |
-    | master-2      | kubernetes-ha-master-2 | Master        | 192.168.5.12 |     2712         |
-    | worker-1      | kubernetes-ha-worker-1 | Worker        | 192.168.5.21 |     2721         |
-    | worker-2      | kubernetes-ha-worker-2 | Worker        | 192.168.5.22 |     2722         |
-    | loadbalancer  | kubernetes-ha-lb       | LoadBalancer  | 192.168.5.30 |     2730         |
+    | VM            |  VM Name               | Hostname |  Purpose       | IP           | Forwarded Port   |
+    | ------------  | ---------------------- | -------- | :-------------:| ------------:| ----------------:|
+    | master-1      | kubernetes-ha-master-1 | master-1 |  Master        | 192.168.5.11 |     2711         |
+    | master-2      | kubernetes-ha-master-2 | master-2 |  Master        | 192.168.5.12 |     2712         |
+    | worker-1      | kubernetes-ha-worker-1 | worker-1 |  Worker        | 192.168.5.21 |     2721         |
+    | worker-2      | kubernetes-ha-worker-2 | worker-2 |  Worker        | 192.168.5.22 |     2722         |
+    | loadbalancer  | kubernetes-ha-lb       | lb       |  LoadBalancer  | 192.168.5.30 |     2730         |
 
-    > These are the default settings. These can be changed in the Vagrant file
+    > These are the default settings. These can be changed in the Vagrant file<br>Note that `Hostname` is the name to use when ssh-ing *between* VMs
 
-- Add's a DNS entry to each of the nodes to access internet
+
+- Adds a DNS entry to each of the nodes to access internet
     > DNS: 8.8.8.8
 
-- Install's Docker on Worker nodes
+- Installs Docker on Worker nodes
 - Runs the below command on all nodes to allow for network forwarding in IP Tables.
   This is required for kubernetes networking to function correctly.
     > sysctl net.bridge.bridge-nf-call-iptables=1
@@ -70,12 +71,12 @@ Vagrant generates a private key for each of these VMs. It is placed under the .v
 - Ensure VMs are assigned the above IP addresses
 - Ensure you can SSH into these VMs using the IP and private keys
 - Ensure the VMs can ping each other
-- Ensure the worker nodes have Docker installed on them. Version: 18.06
+- Ensure the worker nodes have Docker installed on them. Version >= 18.06
   > command `sudo docker version`
 
 ## Troubleshooting Tips
 
-1. If any of the VMs failed to provision, or is not configured correct, delete the vm using the command:
+1. If any of the VMs failed to provision, or is not configured correctly, delete the vm using the command:
 
 `vagrant destroy <vm>`
 
@@ -100,3 +101,14 @@ In such cases delete the VM, then delete the VM folder and then re-provision
 
 `vagrant up`
 
+## Suspending the Environment
+
+If at any point during this course you wish to stop and resume later, run the following to gracefully shut down the cluster
+
+`vagrant halt`
+
+To resume
+
+`vagrant up`
+
+Next: [Installing the Client Tools](./03-client-tools.md)

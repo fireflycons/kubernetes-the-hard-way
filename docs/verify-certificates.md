@@ -2,6 +2,17 @@
 
 > Note: This script is only intended to work with a kubernetes cluster setup following instructions from this repository. It is not a generic script that works for all kubernetes clusters. Feel free to send in PRs with improvements.
 
+If you built the VMs from a Windows machine, you may get an obscure error running the `cert_verify.sh` script like
+
+```
+: invalid optionline 2: set: -
+set: usage: set [-abefhkmnptuvxBCHP] [-o option-name] [--] [arg ...]
+cert_verify.sh: line 4: $'\r': command not found
+cert_verify.sh: line 9: $'\r': command not found
+..etc...
+```
+See below for fix.
+
 This script was developed to assist the verification of certificates for each Kubernetes component as part of building the cluster. This script may be executed as soon as you have completed the Lab steps up to [Bootstrapping the Kubernetes Worker Nodes](./09-bootstrapping-kubernetes-workers.md). The script is named as `cert_verify.sh` and it is available at `/home/vagrant` directory of master-1 , master-2 and worker-1 nodes. If it's not already available there copy the script to the nodes from [here](../vagrant/ubuntu/cert_verify.sh).
 
 It is important that the script execution needs to be done by following commands after logging into the respective virtual machines [ whether it is master-1 / master-2 / worker-1 ] via SSH.
@@ -27,3 +38,14 @@ Following are the successful output of script execution under different nodes,
 
 Any misconfiguration in certificates will be reported in red.
 
+## Fixing script error when provisioned from Windows
+
+This error occurs because the Vagrant provisioner has uploaded the script with Windows line endings. You can convert it to Linux line endings as follows:
+
+```shell
+{
+    sudo apt-get update -y
+    sudo apt-get install -y dos2unix
+    dos2unix cert_verify.sh
+}
+```
