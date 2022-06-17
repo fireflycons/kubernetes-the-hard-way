@@ -14,10 +14,12 @@ Download and Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) on 
  - Linux distributions
  - Solaris hosts
 
+ June 2022: Note that on Windows, there is a [bug](https://forums.virtualbox.org/viewtopic.php?f=6&t=105741) in VirtualBox versions >= 6.1.32. You are advised to install 6.1.30.
+
 ## Vagrant
 
 Once VirtualBox is installed you may chose to deploy virtual machines manually on it.
-Vagrant provides an easier way to deploy multiple virtual machines on VirtualBox more consistenlty.
+Vagrant provides an easier way to deploy multiple virtual machines on VirtualBox more consistently.
 
 Download and Install [Vagrant](https://www.vagrantup.com/) on your platform.
 
