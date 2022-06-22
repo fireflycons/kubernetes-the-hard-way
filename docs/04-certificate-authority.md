@@ -270,7 +270,7 @@ bash ./cert_verify.sh
 PKI generated correctly!
 ```
 
-If there are any errors, please review above steps and the re-verify
+If there are any errors, please review above steps and then re-verify
 
 ## Distribute the Certificates
 
