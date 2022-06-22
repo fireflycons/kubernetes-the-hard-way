@@ -256,6 +256,21 @@ service-account.key
 service-account.crt
 ```
 
+## Verify the PKI
+
+Run the following, and select option 1 to check all required certificates were generated.
+
+```bash
+bash ./cert_verify.sh
+```
+
+> Expected output
+
+```
+PKI generated correctly!
+```
+
+If there are any errors, please review above steps and the re-verify
 
 ## Distribute the Certificates
 

@@ -88,6 +88,119 @@ SYSTEMD_WORKER_1_KUBELET=/etc/systemd/system/kubelet.service
 WORKER_1_KP_KUBECONFIG=/var/lib/kube-proxy/kubeconfig
 SYSTEMD_WORKER_1_KP=/etc/systemd/system/kube-proxy.service
 
+# Function PKI
+
+check_pki()
+{
+    error=0
+
+    if [ ! -f $CACERT ]
+    then
+        error=1
+        printf "${FAILED}${CACERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $CAKEY ]
+    then
+        error=1
+        printf "${FAILED}${CAKEY} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $ADMINCERT ]
+    then
+        error=1
+        printf "${FAILED}${ADMINCERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $ADMINKEY ]
+    then
+        error=1
+        printf "${FAILED}${ADMINKEY} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $KCMCERT ]
+    then
+        error=1
+        printf "${FAILED}${KCMCERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $KCMKEY ]
+    then
+        error=1
+        printf "${FAILED}${KCMKEY} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $KPCERT ]
+    then
+        error=1
+        printf "${FAILED}${KPCERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $KPKEY ]
+    then
+        error=1
+        printf "${FAILED}${KPKEY} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $KSCERT ]
+    then
+        error=1
+        printf "${FAILED}${KSCERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $KSKEY ]
+    then
+        error=1
+        printf "${FAILED}${KSKEY} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $APICERT ]
+    then
+        error=1
+        printf "${FAILED}${APICERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $APIKEY ]
+    then
+        error=1
+        printf "${FAILED}${APIKEY} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $ETCDCERT ]
+    then
+        error=1
+        printf "${FAILED}${ETCDCERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $ETCDKEY ]
+    then
+        error=1
+        printf "${FAILED}${ETCDKEY} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $SACERT ]
+    then
+        error=1
+        printf "${FAILED}${SACERT} has not been generated${NC}\n"
+    fi
+
+    if [ ! -f $SAKEY ]
+    then
+        error=1
+        printf "${FAILED}${SAKEY} has not been generated${NC}\n"
+    fi
+
+    if [ $error -eq 1 ]
+    then
+        printf "${FAILED}Some of the PKI is missing. Please review the lab steps.${NC}"
+        exit 1
+    else
+        printf "${SUCCESS}PKI generated correctly!${NC}\n"
+    fi
+}
+
+# End Function PKI
+
 
 # Function - Master node #
 
@@ -636,7 +749,7 @@ check_cert_worker_1_kubelet()
     CACERT=/var/lib/kubernetes/ca.crt
     WORKER_1_TLSCERTFILE=/var/lib/kubelet/${HOSTNAME}.crt
     WORKER_1_TLSPRIVATEKEY=/var/lib/kubelet/${HOSTNAME}.key
-    
+
     if [ -z $WORKER_1_KUBELET ] && [ -z $SYSTEMD_WORKER_1_KUBELET ]
         then
             printf "${FAILED}please specify worker-1 kubelet config location\n"
@@ -681,7 +794,7 @@ check_cert_worker_1_kp()
 {
 
     WORKER_1_KP_CONFIG_YAML=/var/lib/kube-proxy/kube-proxy-config.yaml
-    
+
     if [ -z $WORKER_1_KP_KUBECONFIG ] && [ -z $SYSTEMD_WORKER_1_KP ]
         then
             printf "${FAILED}please specify worker-1 kube-proxy config and systemd service path\n"
@@ -710,15 +823,31 @@ check_cert_worker_1_kp()
 # END OF Function - Worker-1 node #
 
 echo -e "This script will validate the certificates in master as well as worker-1 nodes. Before proceeding, make sure you ssh into the respective node [ Master or Worker-1 ] for certificate validation\n"
-echo -e "1. Verify certification in Master Node\n"
-echo -e "2. Verify certification in Worker-1 Node\n"
-echo -e "Please select either the option 1 or 2\n"
+echo -e "1. Verify creation of PKI in Master-1 Node\n"
+echo -e "2. Verify certification in Master Node\n"
+echo -e "3. Verify certification in Worker-1 Node\n"
+echo -n "Please select option 1, 2 or 3: "
 read value
+echo
 
 case $value in
 
   1)
-    echo -e "The selected option is $value, proceeding the certificate verification of Master node"
+    echo -e "The selected option is $value, proceeding with PKI verification of Master-1 node"
+
+    master_hostname=$(hostname -s)
+
+    if [ $master_hostname != "master-1" ]
+    then
+        printf "${FAILED}Please run at master-1 node${NC}\n"
+        exit 1
+    fi
+
+    check_pki()
+    ;;
+
+  2)
+    echo -e "The selected option is $value, proceeding with certificate verification of Master node"
 
     ### MASTER NODES ###
     master_hostname=$(hostname -s)
@@ -752,8 +881,8 @@ case $value in
 
     ;;
 
-  2)
-    echo -e "The selected option is $value, proceeding the certificate verification of Worker-1 node"
+  3)
+    echo -e "The selected option is $value, proceeding with certificate verification of Worker-1 node"
 
     ### WORKER-1 NODE ###
 
