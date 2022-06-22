@@ -16,7 +16,7 @@ In this section you will provision a Certificate Authority that can be used to g
 Create a CA certificate, then generate a Certificate Signing Request and use it to create a private key:
 
 
-```
+```bash
 # Create private key for CA
 openssl genrsa -out ca.key 2048
 
@@ -50,7 +50,7 @@ In this section you will generate client and server certificates for each Kubern
 
 Generate the `admin` client certificate and private key:
 
-```
+```bash
 # Generate private key for admin user
 openssl genrsa -out admin.key 2048
 
@@ -81,7 +81,7 @@ For now let's just focus on the control plane components.
 
 Generate the `kube-controller-manager` client certificate and private key:
 
-```
+```bash
 openssl genrsa -out kube-controller-manager.key 2048
 
 openssl req -new -key kube-controller-manager.key \
@@ -104,7 +104,7 @@ kube-controller-manager.crt
 Generate the `kube-proxy` client certificate and private key:
 
 
-```
+```bash
 openssl genrsa -out kube-proxy.key 2048
 
 openssl req -new -key kube-proxy.key \
@@ -127,7 +127,7 @@ Generate the `kube-scheduler` client certificate and private key:
 
 
 
-```
+```bash
 openssl genrsa -out kube-scheduler.key 2048
 
 openssl req -new -key kube-scheduler.key \
@@ -149,7 +149,7 @@ The kube-apiserver certificate requires all names that various components may re
 
 The `openssl` command cannot take alternate names as command line parameter. So we must create a `conf` file for it:
 
-```
+```bash
 cat > openssl.cnf <<EOF
 [req]
 req_extensions = v3_req
@@ -174,7 +174,7 @@ EOF
 
 Generates certs for kube-apiserver
 
-```
+```bash
 openssl genrsa -out kube-apiserver.key 2048
 
 openssl req -new -key kube-apiserver.key \
@@ -197,7 +197,7 @@ Similarly ETCD server certificate must have addresses of all the servers part of
 
 The `openssl` command cannot take alternate names as command line parameter. So we must create a `conf` file for it:
 
-```
+```bash
 cat > openssl-etcd.cnf <<EOF
 [req]
 req_extensions = v3_req
@@ -216,7 +216,7 @@ EOF
 
 Generates certs for ETCD
 
-```
+```bash
 openssl genrsa -out etcd-server.key 2048
 
 openssl req -new -key etcd-server.key \
@@ -239,7 +239,7 @@ The Kubernetes Controller Manager leverages a key pair to generate and sign serv
 
 Generate the `service-account` certificate and private key:
 
-```
+```bash
 openssl genrsa -out service-account.key 2048
 
 openssl req -new -key service-account.key \
@@ -261,7 +261,7 @@ service-account.crt
 
 Copy the appropriate certificates and private keys to each controller instance:
 
-```
+```bash
 for instance in master-1 master-2; do
   scp ca.crt ca.key kube-apiserver.key kube-apiserver.crt \
     service-account.key service-account.crt \

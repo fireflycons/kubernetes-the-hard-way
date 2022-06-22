@@ -15,7 +15,7 @@ Generate a certificate and private key for one worker node:
 
 On `master-1`:
 
-```
+```bash
 for instance in worker-1 worker-2 ; do
 IP_1=$(dig @127.0.0.53 ${instance} +short)
 cat > openssl-${instance}.cnf <<EOF
@@ -52,14 +52,16 @@ worker-2.crt
 When generating kubeconfig files for Kubelets the client certificate matching the Kubelet's node name must be used. This will ensure Kubelets are properly authorized by the Kubernetes [Node Authorizer](https://kubernetes.io/docs/admin/authorization/node/).
 
 Get the kube-api server load-balancer IP.
-```
+
+```bash
 LOADBALANCER_ADDRESS=192.168.5.30
 ```
 
 Generate kubeconfig files for the worker nodes.
 
 On `master-1`:
-```
+
+```bash
 {
   for instance in worker-1 worker-2 ; do
     kubectl config set-cluster kubernetes-the-hard-way \
@@ -93,7 +95,8 @@ worker-2.kubeconfig
 
 ### Copy certificates, private keys and kubeconfig files to the worker nodes:
 On `master-1`:
-```
+
+```bash
 for instance in worker-1 worker-2 ; do
   scp ca.crt ${instance}.crt ${instance}.key ${instance}.kubeconfig ${instance}:~/
 done
@@ -107,7 +110,7 @@ done
 
 Install the OS dependencies:
 
-```
+```bash
 {
   sudo apt-get update
   sudo apt-get -y install socat conntrack ipset
@@ -122,13 +125,13 @@ By default the kubelet will fail to start if [swap](https://help.ubuntu.com/comm
 
 Verify if swap is enabled:
 
-```
+```bash
 sudo swapon --show
 ```
 
 If output is empty then swap is not enabled. If swap is enabled run the following command to disable swap immediately:
 
-```
+```bash
 sudo swapoff -a
 ```
 
@@ -136,7 +139,7 @@ sudo swapoff -a
 
 ### Download and Install Worker Binaries
 
-```
+```bash
 wget -q --show-progress --https-only --timestamping \
   https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.21.0/crictl-v1.21.0-linux-amd64.tar.gz \
   https://github.com/opencontainers/runc/releases/download/v1.0.0-rc93/runc.amd64 \
@@ -149,7 +152,7 @@ wget -q --show-progress --https-only --timestamping \
 
 Create the installation directories:
 
-```
+```bash
 sudo mkdir -p \
   /etc/cni/net.d \
   /opt/cni/bin \
@@ -161,7 +164,7 @@ sudo mkdir -p \
 
 Install the worker binaries:
 
-```
+```bash
 {
   mkdir containerd
   tar -xvf crictl-v1.21.0-linux-amd64.tar.gz
@@ -178,13 +181,13 @@ Install the worker binaries:
 
 Set a shell variable to the Pod CIDR range:
 
-```
+```bash
 POD_CIDR=192.168.5.0/24
 ```
 
 Create the `bridge` network configuration file:
 
-```
+```bash
 cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
 {
     "cniVersion": "0.4.0",
@@ -206,7 +209,7 @@ EOF
 
 Create the `loopback` network configuration file:
 
-```
+```bash
 cat <<EOF | sudo tee /etc/cni/net.d/99-loopback.conf
 {
     "cniVersion": "0.4.0",
@@ -220,11 +223,11 @@ EOF
 
 Create the `containerd` configuration file:
 
-```
+```bash
 sudo mkdir -p /etc/containerd/
 ```
 
-```
+```bash
 cat << EOF | sudo tee /etc/containerd/config.toml
 [plugins]
   [plugins.cri.containerd]
@@ -238,7 +241,7 @@ EOF
 
 Create the `containerd.service` systemd unit file:
 
-```
+```bash
 cat <<EOF | sudo tee /etc/systemd/system/containerd.service
 [Unit]
 Description=containerd container runtime
@@ -264,7 +267,7 @@ EOF
 
 ### Configure the Kubelet
 
-```
+```bash
 {
   sudo mv ${HOSTNAME}.key ${HOSTNAME}.crt /var/lib/kubelet/
   sudo mv ${HOSTNAME}.kubeconfig /var/lib/kubelet/kubelet.kubeconfig
@@ -274,7 +277,7 @@ EOF
 
 Create the `kubelet-config.yaml` configuration file:
 
-```
+```bash
 cat <<EOF | sudo tee /var/lib/kubelet/kubelet-config.yaml
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
@@ -302,7 +305,7 @@ EOF
 
 Create the `kubelet.service` systemd unit file:
 
-```
+```bash
 cat <<EOF | sudo tee /etc/systemd/system/kubelet.service
 [Unit]
 Description=Kubernetes Kubelet
@@ -330,13 +333,13 @@ EOF
 
 ### Configure the Kubernetes Proxy
 
-```
+```bash
 sudo mv kube-proxy.kubeconfig /var/lib/kube-proxy/kube-proxy.kubeconfig
 ```
 
 Create the `kube-proxy-config.yaml` configuration file:
 
-```
+```bash
 cat <<EOF | sudo tee /var/lib/kube-proxy/kube-proxy-config.yaml
 kind: KubeProxyConfiguration
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
@@ -349,7 +352,7 @@ EOF
 
 Create the `kube-proxy.service` systemd unit file:
 
-```
+```bash
 cat <<EOF | sudo tee /etc/systemd/system/kube-proxy.service
 [Unit]
 Description=Kubernetes Kube Proxy
@@ -368,7 +371,7 @@ EOF
 
 ### Start the Worker Services
 
-```
+```bash
 {
   sudo systemctl daemon-reload
   sudo systemctl enable containerd kubelet kube-proxy
@@ -384,7 +387,7 @@ On `master-1`
 
 List the registered Kubernetes nodes:
 
-```
+```bash
 kubectl get nodes --kubeconfig admin.kubeconfig
 ```
 

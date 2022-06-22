@@ -8,7 +8,7 @@ In this lab you will generate an encryption key and an [encryption config](https
 
 Generate an encryption key:
 
-```
+```bash
 ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 ```
 
@@ -16,7 +16,7 @@ ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
 
 Create the `encryption-config.yaml` encryption config file:
 
-```
+```bash
 cat > encryption-config.yaml <<EOF
 kind: EncryptionConfig
 apiVersion: v1
@@ -34,7 +34,7 @@ EOF
 
 Copy the `encryption-config.yaml` encryption config file to each controller instance:
 
-```
+```bash
 for instance in master-1 master-2; do
   scp encryption-config.yaml ${instance}:~/
 done
@@ -42,7 +42,7 @@ done
 
 Move `encryption-config.yaml` encryption config file to appropriate directory.
 
-```
+```bash
 for instance in master-1 master-2; do
   ssh ${instance} sudo mkdir -p /var/lib/kubernetes
   ssh ${instance} sudo mv encryption-config.yaml /var/lib/kubernetes/

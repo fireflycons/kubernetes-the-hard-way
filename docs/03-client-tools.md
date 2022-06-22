@@ -33,7 +33,7 @@ printf "\ncat >> ~/.ssh/authorized_keys <<EOF\n$(cat .ssh/id_rsa.pub)\nEOF\n\n"
 
 > output is similar to this
 
-```
+```bash
 cat >> ~/.ssh/authorized_keys <<EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD......8+08b vagrant@master-1
 EOF
@@ -44,7 +44,7 @@ Then from your main workstation, use `vagrant ssh` to connect to each of the fou
 
 Finally add the public key to `authorized_keys` on `master-1` so that we can ssh/scp to ourself. This is necessary otherwise the certificate distribution in the next step won't work
 
-```
+```bash
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 ```
 
@@ -56,7 +56,7 @@ Reference: [https://kubernetes.io/docs/tasks/tools/install-kubectl/](https://kub
 
 ### Linux
 
-```
+```bash
 wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
@@ -66,7 +66,7 @@ sudo mv kubectl /usr/local/bin/
 
 Verify `kubectl` version 1.21.0 or higher is installed:
 
-```
+```bash
 kubectl version
 ```
 

@@ -16,14 +16,14 @@ The commands in this lab must be run on each controller instance: `master-1`, an
 
 Download the official etcd release binaries from the [coreos/etcd](https://github.com/coreos/etcd) GitHub project:
 
-```
+```bash
 wget -q --show-progress --https-only --timestamping \
   "https://github.com/coreos/etcd/releases/download/v3.4.15/etcd-v3.4.15-linux-amd64.tar.gz"
 ```
 
 Extract and install the `etcd` server and the `etcdctl` command line utility:
 
-```
+```bash
 {
   tar -xvf etcd-v3.4.15-linux-amd64.tar.gz
   sudo mv etcd-v3.4.15-linux-amd64/etcd* /usr/local/bin/
@@ -32,7 +32,7 @@ Extract and install the `etcd` server and the `etcdctl` command line utility:
 
 ### Configure the etcd Server
 
-```
+```bash
 {
   sudo mkdir -p /etc/etcd /var/lib/etcd
   sudo cp ca.crt etcd-server.key etcd-server.crt /etc/etcd/
@@ -41,19 +41,19 @@ Extract and install the `etcd` server and the `etcdctl` command line utility:
 
 The instance internal IP address will be used to serve client requests and communicate with etcd cluster peers. Retrieve the internal IP address of the master(etcd) nodes:
 
-```
+```bash
 INTERNAL_IP=$(ip addr show enp0s8 | grep "inet " | awk '{print $2}' | cut -d / -f 1)
 ```
 
 Each etcd member must have a unique name within an etcd cluster. Set the etcd name to match the hostname of the current compute instance:
 
-```
+```bash
 ETCD_NAME=$(hostname -s)
 ```
 
 Create the `etcd.service` systemd unit file:
 
-```
+```bash
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service
 [Unit]
 Description=etcd
@@ -88,7 +88,7 @@ EOF
 
 ### Start the etcd Server
 
-```
+```bash
 {
   sudo systemctl daemon-reload
   sudo systemctl enable etcd
@@ -102,7 +102,7 @@ EOF
 
 List the etcd cluster members:
 
-```
+```bash
 sudo ETCDCTL_API=3 etcdctl member list \
   --endpoints=https://127.0.0.1:2379 \
   --cacert=/etc/etcd/ca.crt \
