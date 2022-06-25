@@ -111,4 +111,6 @@ To resume
 
 `vagrant up`
 
+Note that once you have got some way through this course and have some of the services configured, the VMs take longer to boot and Vagrant gets impatient and bombs out. Just keep re-running `vagrant up` till they all eventually are running.
+
 Next: [Installing the Client Tools](./03-client-tools.md)
