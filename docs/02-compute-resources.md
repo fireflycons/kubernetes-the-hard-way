@@ -113,4 +113,8 @@ To resume
 
 Note that once you have got some way through this course and have some of the services configured, the VMs take longer to boot and Vagrant gets impatient and bombs out. Just keep re-running `vagrant up` till they all eventually are running.
 
+Once all the VMs are up, you should check they are *completely* booted. Run the VirtualBox application, and use the `Show` button at each VM to ensure it has finished booting and reached the login prompt.
+
+Now do `vagrant ssh master-1` to login to your first master node and verify any services you already installed are up using `sudo systemctl status`
+
 Next: [Installing the Client Tools](./03-client-tools.md)
