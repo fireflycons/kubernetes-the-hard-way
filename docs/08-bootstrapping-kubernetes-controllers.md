@@ -98,7 +98,6 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --bind-address=0.0.0.0 \\
   --client-ca-file=/var/lib/kubernetes/ca.crt \\
   --enable-admission-plugins=NodeRestriction,ServiceAccount \\
-  --enable-swagger-ui=true \\
   --enable-bootstrap-token-auth=true \\
   --etcd-cafile=/var/lib/kubernetes/ca.crt \\
   --etcd-certfile=/var/lib/kubernetes/etcd-server.crt \\
@@ -109,7 +108,6 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
   --kubelet-client-certificate=/var/lib/kubernetes/apiserver-kubelet-client.crt \\
   --kubelet-client-key=/var/lib/kubernetes/apiserver-kubelet-client.key \\
-  --kubelet-https=true \\
   --runtime-config=api/all=true \\
   --service-account-key-file=/var/lib/kubernetes/service-account.crt \\
   --service-account-signing-key-file=/var/lib/kubernetes/service-account.key \\
@@ -180,7 +178,7 @@ Create the `kube-scheduler.yaml` configuration file:
 sudo mkdir -p /etc/kubernetes/config
 
 cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
-apiVersion: kubescheduler.config.k8s.io/v1beta1
+apiVersion: kubescheduler.config.k8s.io/v1beta2
 kind: KubeSchedulerConfiguration
 clientConnection:
   kubeconfig: "/var/lib/kubernetes/kube-scheduler.kubeconfig"
@@ -286,12 +284,12 @@ curl  https://192.168.5.30:6443/version -k
 ```
 {
   "major": "1",
-  "minor": "13",
+  "minor": "24",
   "gitVersion": "v1.24.0",
-  "gitCommit": "ddf47ac13c1a9483ea035a79cd7c10005ff21a6d",
+  "gitCommit": "4ce5a8954017644c5420bae81d72b09b735c21f0",
   "gitTreeState": "clean",
-  "buildDate": "2018-12-03T20:56:12Z",
-  "goVersion": "go1.11.2",
+  "buildDate": "2022-05-03T13:38:19Z",
+  "goVersion": "go1.18.1",
   "compiler": "gc",
   "platform": "linux/amd64"
 }
@@ -306,7 +304,7 @@ In this section you will configure RBAC permissions to allow the Kubernetes API 
 The commands in this section will effect the entire cluster and only need to be run once from one of the controller nodes (`master-1`).
 
 
-Create the `system:kube-apiserver-to-kubelet` [ClusterRole](https://kubernetes.io/docs/admin/authorization/rbac/#role-and-clusterrole) with permissions to access the Kubelet API and perform most common tasks associated with managing pods:
+Create the `system:kube-apiserver-kubelet-client` [ClusterRole](https://kubernetes.io/docs/admin/authorization/rbac/#role-and-clusterrole) with permissions to access the Kubelet API and perform most common tasks associated with managing pods:
 
 ```bash
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
@@ -317,7 +315,7 @@ metadata:
     rbac.authorization.kubernetes.io/autoupdate: "true"
   labels:
     kubernetes.io/bootstrapping: rbac-defaults
-  name: system:kube-apiserver-to-kubelet
+  name: system:kube-apiserver-kubelet-client
 rules:
   - apiGroups:
       - ""
@@ -334,7 +332,7 @@ EOF
 
 The Kubernetes API Server authenticates to the Kubelet as the `kubernetes` user using the client certificate as defined by the `--kubelet-client-certificate` flag.
 
-Bind the `system:kube-apiserver-to-kubelet` ClusterRole to the `kubernetes` user:
+Bind the `system:kube-apiserver-kubelet-client` ClusterRole to the `kubernetes` user:
 
 ```bash
 cat <<EOF | kubectl apply --kubeconfig admin.kubeconfig -f -
@@ -346,7 +344,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: system:kube-apiserver-to-kubelet
+  name: system:kube-apiserver-kubelet-client
 subjects:
   - apiGroup: rbac.authorization.k8s.io
     kind: User
