@@ -24,10 +24,10 @@ Download the official Kubernetes release binaries:
 
 ```bash
 wget -q --show-progress --https-only --timestamping \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-apiserver" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-controller-manager" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kube-scheduler" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl"
+  "https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kube-apiserver" \
+  "https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kube-controller-manager" \
+  "https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kube-scheduler" \
+  "https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kubectl"
 ```
 
 Reference: https://kubernetes.io/docs/setup/release/#server-binaries
@@ -44,7 +44,9 @@ Install the Kubernetes binaries:
 ### Configure the Kubernetes API Server
 
 ```bash
-  sudo cp ca.crt ca.key kube-apiserver.crt kube-apiserver.key \
+  sudo cp ca.crt ca.key \
+    kube-apiserver.crt kube-apiserver.key \
+    apiserver-kubelet-client.crt apiserver-kubelet-client.key \
     service-account.key service-account.crt \
     etcd-server.key etcd-server.crt \
     /var/lib/kubernetes/
@@ -105,8 +107,8 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.crt \\
-  --kubelet-client-certificate=/var/lib/kubernetes/kube-apiserver.crt \\
-  --kubelet-client-key=/var/lib/kubernetes/kube-apiserver.key \\
+  --kubelet-client-certificate=/var/lib/kubernetes/apiserver-kubelet-client.crt \\
+  --kubelet-client-key=/var/lib/kubernetes/apiserver-kubelet-client.key \\
   --kubelet-https=true \\
   --runtime-config=api/all=true \\
   --service-account-key-file=/var/lib/kubernetes/service-account.crt \\
@@ -285,7 +287,7 @@ curl  https://192.168.5.30:6443/version -k
 {
   "major": "1",
   "minor": "13",
-  "gitVersion": "v1.21.0",
+  "gitVersion": "v1.24.0",
   "gitCommit": "ddf47ac13c1a9483ea035a79cd7c10005ff21a6d",
   "gitTreeState": "clean",
   "buildDate": "2018-12-03T20:56:12Z",

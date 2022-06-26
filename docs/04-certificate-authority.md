@@ -155,9 +155,10 @@ cat > openssl.cnf <<EOF
 req_extensions = v3_req
 distinguished_name = req_distinguished_name
 [req_distinguished_name]
-[ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+[v3_req]
+basicConstraints = critical, CA:FALSE
+keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 [alt_names]
 DNS.1 = kubernetes
@@ -172,7 +173,7 @@ IP.5 = 127.0.0.1
 EOF
 ```
 
-Generates certs for kube-apiserver
+Generate certs for kube-apiserver
 
 ```bash
 openssl genrsa -out kube-apiserver.key 2048
@@ -190,6 +191,43 @@ Results:
 kube-apiserver.crt
 kube-apiserver.key
 ```
+
+# The Kubelet Client Certificate
+
+This certificate is for the api server to authenticate with the kubelets when it requests information from them
+
+```bash
+cat > openssl.cnf <<EOF
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+[v3_req]
+basicConstraints = critical, CA:FALSE
+keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth
+EOF
+```
+
+Generate certs for kubelet authentication
+
+```bash
+openssl genrsa -out apiserver-kubelet-client.key 2048
+
+openssl req -new -key apiserver-kubelet-client.key \
+  -subj "/CN=kube-apiserver-kubelet-client/O=system:masters" -out apiserver-kubelet-client.csr -config openssl.cnf
+
+openssl x509 -req -in apiserver-kubelet-client.csr \
+-CA ca.crt -CAkey ca.key -CAcreateserial  -out apiserver-kubelet-client.crt -extensions v3_req -extfile openssl.cnf -days 1000
+```
+
+Results:
+
+```
+apiserver-kubelet-client.crt
+apiserver-kubelet-client.key
+```
+
 
 ### The ETCD Server Certificate
 
@@ -279,6 +317,7 @@ Copy the appropriate certificates and private keys to each controller instance:
 ```bash
 for instance in master-1 master-2; do
   scp ca.crt ca.key kube-apiserver.key kube-apiserver.crt \
+    apiserver-kubelet-client.crt apiserver-kubelet-client.key \
     service-account.key service-account.crt \
     etcd-server.key etcd-server.crt \
     ${instance}:~/

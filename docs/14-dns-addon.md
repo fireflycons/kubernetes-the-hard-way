@@ -39,6 +39,8 @@ coredns-699f8ddd77-gtcgb   1/1     Running   0          20s
 
 Reference: https://kubernetes.io/docs/tasks/administer-cluster/coredns/#installing-coredns
 
+[//]: # (https://github.com/kubernetes/kubernetes/issues/55872)
+
 ## Verification
 
 Create a `busybox` deployment:

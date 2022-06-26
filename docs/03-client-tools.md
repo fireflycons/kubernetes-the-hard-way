@@ -57,14 +57,14 @@ Reference: [https://kubernetes.io/docs/tasks/tools/install-kubectl/](https://kub
 ### Linux
 
 ```bash
-wget https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
+wget https://storage.googleapis.com/kubernetes-release/release/v1.24.0/bin/linux/amd64/kubectl
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 ```
 
 ### Verification
 
-Verify `kubectl` version 1.21.0 or higher is installed:
+Verify `kubectl` version 1.24.0 or higher is installed:
 
 ```bash
 kubectl version
@@ -73,7 +73,7 @@ kubectl version
 > output
 
 ```
-Client Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.21.0", GitCommit:"cb303e613a121a29364f75cc67d3d580833a7479", GitTreeState:"clean", BuildDate:"2021-04-08T16:31:21Z", GoVersion:"go1.16.1", Compiler:"gc", Platform:"linux/amd64"}
+Client Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.24.0", GitCommit:"cb303e613a121a29364f75cc67d3d580833a7479", GitTreeState:"clean", BuildDate:"2021-04-08T16:31:21Z", GoVersion:"go1.16.1", Compiler:"gc", Platform:"linux/amd64"}
 The connection to the server localhost:8080 was refused - did you specify the right host or port?
 ```
 
